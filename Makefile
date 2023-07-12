@@ -5,10 +5,10 @@ CCFLAGS := -std=c17 -Wall -Wextra -pedantic $(DEBUG) $(OPTIM) $(XCCFLAGS)
 LDFLAGS := -lm $(XLDFLAGS)
 
 3darr: 3darr.o
-	$(CC) $^ -o $@ $(LDFLAGS)
+	$(CC) $^ -o $@ $(LDFLAGS) $(COMMONFLAGS)
 
 3darr.o: 3darr.c
-	$(CC) -c $^ -o $@ $(CCFLAGS)
+	$(CC) -c $^ -o $@ $(CCFLAGS) $(COMMONFLAGS)
 
 .PHONY: clean
 clean:
