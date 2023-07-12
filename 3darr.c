@@ -39,8 +39,7 @@ void cleanup(unsigned long ***arr, size_t x, size_t y, size_t i, size_t j) {
 
 int main(int argc, char **argv) {
     if (argc != 4) {
-        // char *pname = argc == 0 ? "<program>" : argv[0];
-        char *pname = argv[0];
+        char *pname = argc == 0 ? "<program>" : argv[0];
         fprintf(stderr,
                 "wrong usage!\n"
                 "usage: %s <x> <y> <z>\n",
