@@ -1,8 +1,11 @@
+ALL := 3darr
 CC := clang
 OPTIM := -O2
-DEBUG :=
 CCFLAGS := -std=c17 -Wall -Wextra -pedantic $(DEBUG) $(OPTIM) $(XCCFLAGS)
 LDFLAGS := -lm $(XLDFLAGS)
+
+.PHONY: all
+all: $(ALL)
 
 3darr: 3darr.o
 	$(CC) $^ -o $@ $(LDFLAGS) $(COMMONFLAGS)
@@ -13,4 +16,4 @@ LDFLAGS := -lm $(XLDFLAGS)
 .PHONY: clean
 clean:
 	rm -f *.o
-	rm -f 3darr
+	rm -f $(ALL)
