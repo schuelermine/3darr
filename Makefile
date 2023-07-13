@@ -1,5 +1,5 @@
 ALL := 3darr
-CC := clang
+CC := gcc
 OPTIM := -O2
 CCFLAGS := -std=c17 -Wall -Wextra -pedantic $(DEBUG) $(OPTIM) $(XCCFLAGS)
 LDFLAGS := -lm $(XLDFLAGS)
