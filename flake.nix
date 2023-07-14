@@ -16,8 +16,6 @@
             cp 3darr $out/bin/3darr
           '';
         };
-        devShells.default = pkgs.stdenv.mkDerivation {
-          name = "env";
-        };
+        devShells.default = pkgs.stdenv.mkDerivation { name = "env"; };
       });
 }
