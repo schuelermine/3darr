@@ -90,7 +90,7 @@ void ensure_usage(int argc, char **argv) {
     }
 }
 
-void printarr(elem ***arr, size_t x, size_t y, size_t z) {
+void print_arr(elem ***arr, size_t x, size_t y, size_t z) {
     for (size_t i = 0; i < x; i++)
         for (size_t j = 0; j < y; j++)
             for (size_t k = 0; k < z; k++)
@@ -112,6 +112,6 @@ int main(int argc, char **argv) {
         perror("value output");
         free_and_exit(arr, x, y, x, y, EXIT_FAILURE);
     }
-    printarr(arr, x, y, z);
+    print_arr(arr, x, y, z);
     free_and_exit(arr, x, y, x, y, EXIT_SUCCESS);
 }
