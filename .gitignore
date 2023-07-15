@@ -3,3 +3,4 @@ result
 3darr
 *.o
 compile_commands.json
+.cache
