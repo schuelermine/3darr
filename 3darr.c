@@ -3,9 +3,14 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
-void report(size_t allocs) {
-    printf("successfully allocated %zu times\n", allocs);
+bool report(size_t allocs) {
+    if (printf("successfully allocated %zu times\n", allocs) < 0) {
+        perror("value output");
+        return false;
+    }
+    return true;
 }
 
 unsigned long getularg(int argno, char *argid, char **argv) {
@@ -79,7 +84,11 @@ int main(int argc, char **argv) {
                 arr[i][j][k] = pow(2, i) + pow(3, j) + pow(5, k);
         }
     }
-    report(allocs);
+    if (!report(allocs)) {
+        perror("value output");
+        cleanup(arr, x, y, x, y);
+        return EXIT_FAILURE;
+    }
     for (size_t i = 0; i < x; i++)
         for (size_t j = 0; j < y; j++)
             for (size_t k = 0; k < z; k++)
