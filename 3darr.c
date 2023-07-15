@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <errno.h>
 #include <inttypes.h>
 #include <math.h>
@@ -5,12 +6,13 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 
-// Unless specified otherwise, all functions have the implicit precondition of all their arguments being defined.
-// Unless specified otherwise, all functions taking pointers have the implicit precondition that these pointers are valid,
-// and their pointees, if they are pointers, also satisfy the property the argument itself satisfies.
-// If an effect is not qualified by "may" or does not express a mere possibility, it is guaranteed.
+// Unless specified otherwise, all functions have the implicit precondition of
+// all their arguments being defined. Unless specified otherwise, all functions
+// taking pointers have the implicit precondition that these pointers are valid,
+// and their pointees, if they are pointers, also satisfy the property the
+// argument itself satisfies. If an effect is not qualified by "may" or does not
+// express a mere possibility, it is guaranteed.
 
 // Element of our array
 typedef unsigned long elem;
@@ -32,8 +34,9 @@ bool print_allocs(size_t allocs) {
 // - Argument argid: argument name to be printed
 // - Argument argv: argument array
 // - Returns: parsed argument as size_t
-// - Preconditions: + argv[argno] is defined
-//                  + argid is nul-terminated
+// - Preconditions:
+// + argv[argno] is defined
+// + argid is nul-terminated
 // - Effects: May exit program, may print to stderr
 size_t get_arg_size_t(int argno, char *argid, char **argv) {
     char *arg = argv[argno];
@@ -62,20 +65,25 @@ size_t get_arg_size_t(int argno, char *argid, char **argv) {
 // - Argument arr: array to free
 // - Argument x: size of arr
 // - Argument y: size of elements of arr
-// - Argument i: index of latest element of arr for which allocation has begun, or x if allocation is finished
-// - Argument j: index of latest element of arr[i] for which allocation has begun, or y if allocation is finished
+// - Argument i: index of latest element of arr for which allocation has begun,
+// or x if allocation is finished
+// - Argument j: index of latest element of arr[i] for which allocation has
+// begun, or y if allocation is finished
 // - Argument ecode: exit code with which to exit
-// - Preconditions: + (1) For all i_ < i, arr[i_] is allocated
-//                  + (2) For all i_ < i, j_ < y, arr[i_][j_] is defined
-//                  + (3) For all j_ < j, arr[i][j_] is defined
-//                  + arr is allocated
-// - Correctness conditions: + In (1), these are the only such i_
-//                           + In (2), these are the only such i_, j_
-//                           + In (3), these are the only such j_
-// - Owns: + arr
-//         + arr[i_] for i_ in (1)
-//         + arr[i_][j_] for i_, j_ in (2)
-//         + arr[i][j_] for j_ in (3)
+// - Preconditions:
+// + (1) For all i_ < i, arr[i_] is allocated
+// + (2) For all i_ < i, j_ < y, arr[i_][j_] is defined
+// + (3) For all j_ < j, arr[i][j_] is defined
+// + arr is allocated
+// - Correctness conditions:
+// + In (1), these are the only such i_
+// + In (2), these are the only such i_, j_
+// + In (3), these are the only such j_
+// - Owns:
+// + arr
+// + arr[i_] for i_ in (1)
+// + arr[i_][j_] for i_, j_ in (2)
+// + arr[i][j_] for j_ in (3)
 // - Effects: frees all elem values in arr, exits program
 void free_and_exit(elem ***arr, size_t x, size_t y, size_t i, size_t j,
                    int ecode) {
@@ -153,9 +161,10 @@ void ensure_usage(int argc, char **argv) {
 // - Argument y: size of elements of arr
 // - Argument z: size of elements of elements of arr
 // - Preconditions: for all i < x, j < y, k < z, arr[i][j][k] is defined
-// - Owns: + arr
-//         + arr[i] for all i < x
-//         + arr[i][j] for all i < x, j < y
+// - Owns:
+// + arr
+// + arr[i] for all i < x
+// + arr[i][j] for all i < x, j < y
 // - Effects: prints to stdout, may print to stderr, may exit program
 void print_arr(elem ***arr, size_t x, size_t y, size_t z) {
     for (size_t i = 0; i < x; i++)
