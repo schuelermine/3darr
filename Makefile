@@ -2,7 +2,7 @@ ALL := 3darr
 CC := gcc
 OPTIM := -O2
 CCFLAGS := -std=c17 -Wall -Wextra -pedantic $(DEBUG) $(OPTIM) $(XCCFLAGS)
-LDFLAGS := -lm $(XLDFLAGS)
+LDFLAGS := $(XLDFLAGS)
 
 .PHONY: all
 all: $(ALL)
