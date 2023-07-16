@@ -107,13 +107,16 @@ void free_and_exit(elem ***arr, size_t x, size_t y, size_t i, size_t j,
 // Argument x: base of exponentiation
 // Argument y: exponent
 elem elem_pow(elem x, size_t y) {
-    if (y == 0)
-        return 1;
-    size_t quot = y / 2;
-    size_t rem = y % 2;
-    elem result = elem_pow(x, quot);
-    result *= result;
-    return rem == 0 ? result : x * result;
+    elem result = 1;
+    while (true) {
+        if ((y & 1) == 1)
+            result *= y;
+        y >>= 1;
+        if (y == 0)
+            break;
+        x *= x;
+    }
+    return result;
 }
 
 // Allocate and initialize 3D array
