@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 // Unless specified otherwise, all functions have the implicit precondition of
 // all their arguments being defined. Unless specified otherwise, all functions
@@ -15,6 +16,7 @@
 // express a mere possibility, it is guaranteed.
 
 // Element of our array
+// The fact that this is a unsigned long is relied on
 typedef unsigned long elem;
 
 // Report number of successful allocations
@@ -71,9 +73,9 @@ size_t get_arg_size_t(int argno, char *argid, char **argv) {
 // begun, or y if allocation is finished
 // - Argument ecode: exit code with which to exit
 // - Preconditions:
-// + (1) For all i_ < i, arr[i_] is allocated
-// + (2) For all i_ < i, j_ < y, arr[i_][j_] is defined
-// + (3) For all j_ < j, arr[i][j_] is defined
+// + (1) For all i_ < i, arr[i_] is defined and allocated
+// + (2) For all i_ < i, j_ < y, arr[i_][j_] is defined and allocated
+// + (3) For all j_ < j, arr[i][j_] is defined and allocated
 // + arr is allocated
 // - Correctness conditions:
 // + In (1), these are the only such i_
@@ -84,7 +86,7 @@ size_t get_arg_size_t(int argno, char *argid, char **argv) {
 // + arr[i_] for i_ in (1)
 // + arr[i_][j_] for i_, j_ in (2)
 // + arr[i][j_] for j_ in (3)
-// - Effects: frees all elem values in arr, exits program
+// - Effects: exits program
 void free_and_exit(elem ***arr, size_t x, size_t y, size_t i, size_t j,
                    int ecode) {
     for (size_t i_ = 0; i_ < i; i_++) {
@@ -99,6 +101,19 @@ void free_and_exit(elem ***arr, size_t x, size_t y, size_t i, size_t j,
     }
     free(arr);
     exit(ecode);
+}
+
+// Calculate x to the y-th power
+// Argument x: base of exponentiation
+// Argument y: exponent
+elem elem_pow(elem x, size_t y) {
+    if (y == 0)
+        return 1;
+    size_t quot = y / 2;
+    size_t rem = y % 2;
+    elem result = elem_pow(x, quot);
+    result *= result;
+    return rem == 0 ? result : x * result;
 }
 
 // Allocate and initialize 3D array
@@ -133,7 +148,7 @@ elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
             }
             ++*allocs;
             for (size_t k = 0; k < z; k++)
-                arr[i][j][k] = pow(2, i) + pow(3, j) + pow(5, k);
+                arr[i][j][k] = elem_pow(2, i) + elem_pow(3, j) + elem_pow(5, k);
         }
     }
     return arr;
