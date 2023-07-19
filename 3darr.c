@@ -162,9 +162,10 @@ elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
 // - Argument argv: argument array
 // - Preconditions: for all i < argc, argv[i] is defined and nul-terminated
 // - Effects: may print to stderr, may exit program
+// - Postcondition: for all i < 4, argv[i] is defined
 void ensure_usage(int argc, char **argv) {
     if (argc != 4) {
-        char *pname = argc == 0 ? "<program>" : argv[0];
+        char *pname = argc == 0 || argv[0][0] == '\n' ? "<program>" : argv[0];
         fprintf(stderr,
                 "wrong usage!\n"
                 "usage: %s <x> <y> <z>\n",
