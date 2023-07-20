@@ -39,7 +39,7 @@ bool print_allocs(size_t allocs) {
 // - Preconditions:
 // + argv[argno] is defined
 // + argid is nul-terminated
-// - Effects: May exit program, may print to stderr
+// - Effects: may exit program, may print to stderr
 size_t get_arg_size_t(int argno, char *argid, char **argv) {
     char *arg = argv[argno];
     char *argptrcpy = arg;
@@ -63,7 +63,7 @@ size_t get_arg_size_t(int argno, char *argid, char **argv) {
     return (size_t)val;
 }
 
-// Free array and subarrays, and exit
+// Free array and subarrays
 // - Argument arr: array to free
 // - Argument x: size of arr
 // - Argument y: size of elements of arr
@@ -71,24 +71,22 @@ size_t get_arg_size_t(int argno, char *argid, char **argv) {
 // or x if allocation is finished
 // - Argument j: index of latest element of arr[i] for which allocation has
 // begun, or y if allocation is finished
-// - Argument ecode: exit code with which to exit
 // - Preconditions:
-// + (1) For all i_ < i, arr[i_] is defined and allocated
-// + (2) For all i_ < i, j_ < y, arr[i_][j_] is defined and allocated
-// + (3) For all j_ < j, arr[i][j_] is defined and allocated
+// + (1) for all i_ < i, arr[i_] is defined and allocated
+// + (2) for all i_ < i, j_ < y, arr[i_][j_] is defined and allocated
+// + (3) for all j_ < j, arr[i][j_] is defined and allocated
 // + arr is allocated
 // - Correctness conditions:
-// + In (1), these are the only such i_
-// + In (2), these are the only such i_, j_
-// + In (3), these are the only such j_
+// + in (1), these are the only such i_
+// + in (2), these are the only such i_, j_
+// + in (3), these are the only such j_
 // - Owns:
 // + arr
 // + arr[i_] for i_ in (1)
 // + arr[i_][j_] for i_, j_ in (2)
 // + arr[i][j_] for j_ in (3)
-// - Effects: exits program
-void free_and_exit(elem ***arr, size_t x, size_t y, size_t i, size_t j,
-                   int ecode) {
+// - Effects: frees arr and all pointers derived from it
+void free_arr(elem ***arr, size_t x, size_t y, size_t i, size_t j) {
     for (size_t i_ = 0; i_ < i; i_++) {
         for (size_t j_ = 0; j_ < y; j_++)
             free(arr[i_][j_]);
@@ -100,7 +98,6 @@ void free_and_exit(elem ***arr, size_t x, size_t y, size_t i, size_t j,
         free(arr[i]);
     }
     free(arr);
-    exit(ecode);
 }
 
 // Calculate x to the y-th power
@@ -140,7 +137,8 @@ elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
         if (arr[i] == NULL) {
             perror("array allocation");
             print_allocs(*allocs);
-            free_and_exit(arr, x, y, i, 0, EXIT_FAILURE);
+            free_arr(arr, x, y, i, 0);
+            exit(EXIT_FAILURE);
         }
         ++*allocs;
         for (size_t j = 0; j < y; j++) {
@@ -148,7 +146,8 @@ elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
             if (arr[i][j] == NULL) {
                 perror("array allocation");
                 print_allocs(*allocs);
-                free_and_exit(arr, x, y, i, j, EXIT_FAILURE);
+                free_arr(arr, x, y, i, j);
+                exit(EXIT_FAILURE);
             }
             ++*allocs;
             for (size_t k = 0; k < z; k++)
@@ -193,7 +192,8 @@ void print_arr(elem ***arr, size_t x, size_t y, size_t z) {
                 if (printf("arr[%zu][%zu][%zu] = %lu\n", i, j, k,
                            arr[i][j][k]) < 0) {
                     perror("value output");
-                    free_and_exit(arr, x, y, x, y, EXIT_FAILURE);
+                    free_arr(arr, x, y, x, y);
+                    exit(EXIT_FAILURE);
                 }
 }
 
@@ -206,8 +206,10 @@ int main(int argc, char **argv) {
     elem ***arr = mk_arr(x, y, z, &allocs);
     if (!print_allocs(allocs)) {
         perror("value output");
-        free_and_exit(arr, x, y, x, y, EXIT_FAILURE);
+        free_arr(arr, x, y, x, y);
+        return EXIT_FAILURE;
     }
     print_arr(arr, x, y, z);
-    free_and_exit(arr, x, y, x, y, EXIT_SUCCESS);
+    free_arr(arr, x, y, x, y);
+    return EXIT_SUCCESS;
 }
