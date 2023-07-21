@@ -74,7 +74,7 @@ size_t get_arg_size_t(int argno, char *argid, char **argv) {
 // - Preconditions:
 // + (1) for all i_ < i, arr[i_] is defined and allocated
 // + (2) for all i_ < i, j_ < y, arr[i_][j_] is defined and allocated
-// + (3) for all j_ < j, arr[i][j_] is defined and allocated
+// + (3) if i < x, for all j_ < j, arr[i][j_] is defined and allocated
 // + arr is allocated
 // - Correctness conditions:
 // + in (1), these are the only such i_
@@ -100,7 +100,7 @@ void free_arr(elem ***arr, size_t x, size_t y, size_t i, size_t j) {
     free(arr);
 }
 
-// Calculate x to the y-th power
+// Calculate x to the y-th power using exponentiation by squaring
 // Argument x: base of exponentiation
 // Argument y: exponent
 elem elem_pow(elem x, size_t y) {
