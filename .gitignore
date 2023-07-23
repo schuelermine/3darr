@@ -1,7 +1,9 @@
 .direnv
 result
+result-doc
 3darr
 *.o
 compile_commands.json
 .cache
 .vscode
+doc

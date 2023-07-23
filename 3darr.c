@@ -1,28 +1,38 @@
 #include <ctype.h>
 #include <errno.h>
 #include <inttypes.h>
+#include <limits.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
 
-// Unless specified otherwise, all functions have the implicit precondition of
-// all their arguments being defined. Unless specified otherwise, all functions
-// taking pointers have the implicit precondition that these pointers are valid,
-// and their pointees, if they are pointers, also satisfy the property the
-// argument itself satisfies. If an effect is not qualified by "may" or does not
-// express a mere possibility, it is guaranteed.
+/**
+ * @file 3darr.h
+ * Code comprising the `3darr` program.
+ * Unless specified otherwise, all functions have the implicit precondition of
+ * all their arguments being defined. Unless specified otherwise, all functions
+ * taking pointers have the implicit precondition that these pointers are valid,
+ * and their pointees, if they are pointers, also satisfy the property the
+ * argument itself satisfies. If an effect is not qualified by "may" or does not
+ * express a mere possibility, it is guaranteed.
+ */
 
-// Element of our array
-// The fact that this is a unsigned long is relied on
+/**
+ * Element of our array.
+ * The fact that this is a unsigned long is relied on.
+ */
 typedef unsigned long elem;
 
-// Report number of successful allocations
-// - Argument allocs: number of allocations to report
-// - Returns: if printing was successful
-// - Effects: Prints to stdout, may print to stderr
+/**
+ * Report number of successful allocations.
+ * @param allocs number of allocations to report.
+ *
+ * @return if printing was successful.
+ *
+ * **Effects**: Prints to stdout, may print to stderr.
+ */
 bool print_allocs(size_t allocs) {
     if (printf("successfully allocated %zu times\n", allocs) < 0) {
         perror("value output");
@@ -31,15 +41,21 @@ bool print_allocs(size_t allocs) {
     return true;
 }
 
-// Parse argument to size_t
-// - Argument argno: argument index in argv
-// - Argument argid: argument name to be printed
-// - Argument argv: argument array
-// - Returns: parsed argument as size_t
-// - Preconditions:
-// + argv[argno] is defined
-// + argid is nul-terminated
-// - Effects: may exit program, may print to stderr
+/**
+ * Parse argument to `size_t`.
+ *
+ * @param argno argument index in `argv`.
+ * @param argid argument name to be printed.
+ * @param argv argument array.
+ *
+ * @return parsed argument as `size_t`.
+ *
+ * @pre
+ * - `argv[argno]` is defined.
+ * - `argid` is nul-terminated.
+ *
+ * **Effects**: may exit program, may print to stderr.
+ */
 size_t get_arg_size_t(int argno, char *argid, char **argv) {
     char *arg = argv[argno];
     char *argptrcpy = arg;
@@ -63,46 +79,100 @@ size_t get_arg_size_t(int argno, char *argid, char **argv) {
     return (size_t)val;
 }
 
-// Free array and subarrays
-// - Argument arr: array to free
-// - Argument x: size of arr
-// - Argument y: size of elements of arr
-// - Argument i: index of latest element of arr for which allocation has begun,
-// or x if allocation is finished
-// - Argument j: index of latest element of arr[i] for which allocation has
-// begun, or y if allocation is finished
-// - Preconditions:
-// + (1) for all i_ < i, arr[i_] is defined and allocated
-// + (2) for all i_ < i, j_ < y, arr[i_][j_] is defined and allocated
-// + (3) if i < x, for all j_ < j, arr[i][j_] is defined and allocated
-// + arr is allocated
-// - Correctness conditions:
-// + in (1), these are the only such i_
-// + in (2), these are the only such i_, j_
-// + in (3), these are the only such j_
-// - Owns:
-// + arr
-// + arr[i_] for i_ in (1)
-// + arr[i_][j_] for i_, j_ in (2)
-// + arr[i][j_] for j_ in (3)
-// - Effects: frees arr and all pointers derived from it
-void free_arr(elem ***arr, size_t x, size_t y, size_t i, size_t j) {
+/** Free subarrays up to excluding arr[i].
+ *
+ * @param arr array to free.
+ * @param i index of latest element of `arr` for which allocation has begun,
+ * or the size of `arr` if allocation is finished.
+ * @param y size of elements of `arr`.
+ *
+ * @pre
+ * - (1) for all `i_ < i`, `arr[i_]` is defined and allocated.
+ * - (2) for all `i_ < i`, `j < y`, `arr[i_][j]` is defined and allocated.
+ *
+ * **Correctness conditions**:
+ * - in (1), these are the only such `i_`.
+ * - in (2), these are the only such `i_`, `j`.
+ *
+ * **Frees**:
+ * - `arr[i_]` for `i_` in (1).
+ * - `arr[i_][j]` for `i_`, `j` in (2).
+ * - Effects: frees some pointers derived from `arr`.
+ */
+void free_sub_arr_up_to(elem ***arr, size_t i, size_t y) {
     for (size_t i_ = 0; i_ < i; i_++) {
-        for (size_t j_ = 0; j_ < y; j_++)
-            free(arr[i_][j_]);
+        for (size_t j = 0; j < y; j++)
+            free(arr[i_][j]);
         free(arr[i_]);
     }
-    if (i < x) {
-        for (size_t j_ = 0; j_ < j; j_++)
-            free(arr[i][j_]);
-        free(arr[i]);
-    }
+}
+
+/** Free completely allocated array.
+ *
+ * @param arr: array to free.
+ * @param x: size of `arr`.
+ * @param y: size of elements of `arr`.
+ *
+ * @pre
+ * - (1) for all `i < x`, `arr[i]` is defined and allocated.
+ * - (2) for all `i < x`, `j < y, arr[i][j]` is defined and allocated.
+ * - `arr` is allocated.
+ *
+ * **Correctness conditions**:
+ * - in (1), these are the only such `i`.
+ * - in (2), these are the only such `i`, `j`.
+ *
+ * **Frees**:
+ * - `arr[i]` for `i` in (1).
+ * - `arr[i][j]` for `i`, `j` in (2).
+ *
+ * **Effects**: frees arr and all valid pointers derived from it.
+ */
+void free_complete_arr(elem ***arr, size_t x, size_t y) {
+    free_sub_arr_up_to(arr, x, y);
     free(arr);
 }
 
-// Calculate x to the y-th power using exponentiation by squaring
-// Argument x: base of exponentiation
-// Argument y: exponent
+/** Free incomplete array.
+ *
+ * @param arr: array to free.
+ * @param y: size of elements of arr.
+ * @param i: index of latest element of arr for which allocation has begun.
+ * @param j: index of latest element of `arr[i]` for which allocation has
+ * begun, or y if allocation of that subarray is finished.
+ *
+ * @pre
+ * - (1) for all `i_ < i`, `arr[i_]` is defined and allocated.
+ * - (2) for all `i_ < i`, `j < y`, `arr[i_][j]` is defined and allocated.
+ * - (3) for all `j_ < j`, `arr[i][j_]` is defined and allocated.
+ * - arr is allocated.
+ *
+ * **Correctness conditions**:
+ * - in (1), these are the only such `i_`.
+ * - in (2), these are the only such `i_`, `j`.
+ * - in (3), these are the only such `j_`.
+ *
+ * **Frees**:
+ * - `arr`
+ * - `arr[i_]` for `i_` in (1).
+ * - `arr[i_][j]` for `i_`, `j_` in (2).
+ * - `arr[i][j_]` for `j_` in (3).
+ *
+ * **Effects**: frees `arr` and all valid pointers derived from it.
+ */
+void free_incomplete_arr(elem ***arr, size_t y, size_t i, size_t j) {
+    free_sub_arr_up_to(arr, i, y);
+    for (size_t j_ = 0; j_ < j; j_++)
+        free(arr[i][j_]);
+    free(arr[i]);
+    free(arr);
+}
+
+/** Calculate `x` to the `y`-th power using exponentiation by squaring.
+ *
+ * @param x base of exponentiation.
+ * @param y exponent.
+ */
 elem elem_pow(elem x, size_t y) {
     elem result = 1;
     while (true) {
@@ -116,13 +186,20 @@ elem elem_pow(elem x, size_t y) {
     return result;
 }
 
-// Allocate and initialize 3D array
-// - Argument x: desired size of first layer of array
-// - Argument y: desired size of each second layer of array
-// - Argument z: desired size of each third layer of array
-// - Argument allocs: pointer to store allocation count
-// - Effects: allocates, writes *allocs, may print to stderr, may exit program
-// - Postconditions: for all i < x, j < y, k < z, return_value[i][j][k] is defined
+/** Allocate and initialize 3D array.
+ *
+ * @param x desired size of first layer of array.
+ * @param y desired size of each second layer of array.
+ * @param z desired size of each third layer of array.
+ * @param[out] allocs: pointer to store allocation count.
+ *
+ * **Effects**: allocates, writes *allocs, may print to stderr, may exit
+ * program.
+ *
+ * @post
+ * for all `i < x`, `j < y`, `k < z`, `x[i][j][k]` is defined, where x is the
+ * return value.
+ */
 elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
     *allocs = 0;
     elem ***arr = malloc(x * sizeof(elem **));
@@ -137,7 +214,7 @@ elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
         if (arr[i] == NULL) {
             perror("array allocation");
             print_allocs(*allocs);
-            free_arr(arr, x, y, i, 0);
+            free_incomplete_arr(arr, y, i, 0);
             exit(EXIT_FAILURE);
         }
         ++*allocs;
@@ -146,23 +223,31 @@ elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
             if (arr[i][j] == NULL) {
                 perror("array allocation");
                 print_allocs(*allocs);
-                free_arr(arr, x, y, i, j);
+                free_incomplete_arr(arr, y, i, j);
                 exit(EXIT_FAILURE);
             }
             ++*allocs;
             for (size_t k = 0; k < z; k++)
+                // First three prime numbers
                 arr[i][j][k] = elem_pow(2, i) + elem_pow(3, j) + elem_pow(5, k);
         }
     }
     return arr;
 }
 
-// Check argument count, correct user, and exit
-// - Argument argc: argument count
-// - Argument argv: argument array
-// - Preconditions: for all i < argc, argv[i] is defined and nul-terminated
-// - Effects: may print to stderr, may exit program
-// - Postconditions: for all i < 4, argv[i] is defined
+/** Check argument count, correct user, and exit.
+ *
+ * @param argc argument count.
+ * @param argv argument array.
+ *
+ * @pre
+ * for all `i < argc`, `argv[i]` is defined and nul-terminated.
+ *
+ * **Effects**: may print to stderr, may exit program.
+ *
+ * @post
+ * for all `i < 4`, `argv[i]` is defined.
+ */
 void ensure_usage(int argc, char **argv) {
     if (argc != 4) {
         char *pname = argc == 0 || argv[0][0] == '\n' ? "<program>" : argv[0];
@@ -173,18 +258,23 @@ void ensure_usage(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 }
-
-// Print elements of array
-// - Argument arr: array to print
-// - Argument x: size of arr
-// - Argument y: size of elements of arr
-// - Argument z: size of elements of elements of arr
-// - Preconditions: for all i < x, j < y, k < z, arr[i][j][k] is defined
-// - Owns:
-// + arr
-// + arr[i] for all i < x
-// + arr[i][j] for all i < x, j < y
-// - Effects: prints to stdout, may print to stderr, may exit program
+/** Print elements of array.
+ *
+ * @param arr: array to print.
+ * @param x: size of `arr`.
+ * @param y: size of elements of `arr`.
+ * @param z: size of elements of elements of `arr`.
+ *
+ * @pre
+ * for all `i < x`, `j < y`, `k < z`, `arr[i][j][k]` is defined.
+ *
+ * **Owns**:
+ * - `arr`.
+ * - `arr[i]` for all `i < x`.
+ * - `arr[i][j]` for all `i < x`, `j < y`.
+ *
+ * **Effects**: prints to stdout, may print to stderr, may exit program.
+ */
 void print_arr(elem ***arr, size_t x, size_t y, size_t z) {
     for (size_t i = 0; i < x; i++)
         for (size_t j = 0; j < y; j++)
@@ -192,11 +282,16 @@ void print_arr(elem ***arr, size_t x, size_t y, size_t z) {
                 if (printf("arr[%zu][%zu][%zu] = %lu\n", i, j, k,
                            arr[i][j][k]) < 0) {
                     perror("value output");
-                    free_arr(arr, x, y, x, y);
+                    free_complete_arr(arr, x, y);
                     exit(EXIT_FAILURE);
                 }
 }
 
+/** Main function of the `3darr` program.
+ *
+ * Allocates a 3D array with dimensions specified by the arguments, populates it
+ * with unique values, and prints it.
+ */
 int main(int argc, char **argv) {
     ensure_usage(argc, argv);
     size_t x = get_arg_size_t(1, "x", argv);
@@ -206,10 +301,10 @@ int main(int argc, char **argv) {
     elem ***arr = mk_arr(x, y, z, &allocs);
     if (!print_allocs(allocs)) {
         perror("value output");
-        free_arr(arr, x, y, x, y);
+        free_complete_arr(arr, x, y);
         return EXIT_FAILURE;
     }
     print_arr(arr, x, y, z);
-    free_arr(arr, x, y, x, y);
+    free_complete_arr(arr, x, y);
     return EXIT_SUCCESS;
 }

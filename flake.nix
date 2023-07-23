@@ -10,10 +10,16 @@
         packages.default = pkgs.stdenv.mkDerivation {
           pname = "3darr";
           version = "unstable";
+          nativeBuildInputs = with pkgs; [ doxygen graphviz ];
+          outputs = ["out" "doc"];
           src = ./.;
           installPhase = ''
             mkdir -p $out/bin
             cp 3darr $out/bin/3darr
+            mkdir doc
+            doxygen
+            mkdir -p $doc/share
+            cp -r doc $doc/share/doc
           '';
         };
         devShells.default = pkgs.stdenv.mkDerivation { name = "env"; };
