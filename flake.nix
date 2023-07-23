@@ -24,7 +24,7 @@
         };
         devShells.default = pkgs.stdenv.mkDerivation {
           name = "env";
-          packages = with pkgs; [ doxygen graphviz ];
+          nativeBuildInputs = with pkgs; [ doxygen graphviz ];
         };
       });
 }
