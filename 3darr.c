@@ -177,7 +177,7 @@ elem elem_pow(elem x, size_t y) {
     elem result = 1;
     while (true) {
         if ((y & 1) == 1)
-            result *= y;
+            result *= x;
         y >>= 1;
         if (y == 0)
             break;
