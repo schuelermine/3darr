@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 /**
- * @file 3darr.h
+ * @file 3darr.c
  * Code comprising the `3darr` program.
  * Unless specified otherwise, all functions have the implicit precondition of
  * all their arguments being defined. Unless specified otherwise, all functions
