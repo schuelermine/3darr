@@ -1,4 +1,4 @@
-ALL := 3darr
+ALL := 3darr doc
 CC := gcc
 OPTIM := -O2
 CCFLAGS := -std=c17 -Wall -Wextra -pedantic $(DEBUG) $(OPTIM) $(XCCFLAGS)
@@ -13,7 +13,11 @@ all: $(ALL)
 3darr.o: 3darr.c
 	$(CC) -c $^ -o $@ $(CCFLAGS) $(COMMONFLAGS)
 
+doc:
+	doxygen Doxyfile
+
 .PHONY: clean
 clean:
 	rm -f *.o
-	rm -f $(ALL)
+	rm -rf $(ALL)
+

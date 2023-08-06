@@ -16,8 +16,6 @@
           installPhase = ''
             mkdir -p $out/bin
             cp 3darr $out/bin/3darr
-            mkdir doc
-            doxygen
             mkdir -p $doc/share
             cp -r doc $doc/share/doc
           '';
