@@ -51,7 +51,7 @@ bool print_allocs(size_t allocs) {
  * @return parsed argument as `size_t`.
  *
  * @pre
- * - `argv[argno]` is defined.
+ * - `argv[argno]` is defined and nul-terminated.
  * - `argid` is nul-terminated.
  *
  * **Effects**: may exit program, may print to stderr.
@@ -90,11 +90,11 @@ size_t get_arg_size_t(int argno, char *argid, char **argv) {
  * - (1) for all `i_ < i`, `arr[i_]` is defined and allocated.
  * - (2) for all `i_ < i`, `j < y`, `arr[i_][j]` is defined and allocated.
  *
- * **Correctness conditions**:
+ * **Correctness conditions**
  * - in (1), these are the only such `i_`.
  * - in (2), these are the only such `i_`, `j`.
  *
- * **Frees**:
+ * **Frees**
  * - `arr[i_]` for `i_` in (1).
  * - `arr[i_][j]` for `i_`, `j` in (2).
  * - Effects: frees some pointers derived from `arr`.
@@ -118,11 +118,11 @@ void free_sub_arr_up_to(elem ***arr, size_t i, size_t y) {
  * - (2) for all `i < x`, `j < y, arr[i][j]` is defined and allocated.
  * - `arr` is allocated.
  *
- * **Correctness conditions**:
+ * **Correctness conditions**
  * - in (1), these are the only such `i`.
  * - in (2), these are the only such `i`, `j`.
  *
- * **Frees**:
+ * **Frees**
  * - `arr[i]` for `i` in (1).
  * - `arr[i][j]` for `i`, `j` in (2).
  *
@@ -147,12 +147,12 @@ void free_complete_arr(elem ***arr, size_t x, size_t y) {
  * - (3) for all `j_ < j`, `arr[i][j_]` is defined and allocated.
  * - arr is allocated.
  *
- * **Correctness conditions**:
+ * **Correctness conditions**
  * - in (1), these are the only such `i_`.
  * - in (2), these are the only such `i_`, `j`.
  * - in (3), these are the only such `j_`.
  *
- * **Frees**:
+ * **Frees**
  * - `arr`
  * - `arr[i_]` for `i_` in (1).
  * - `arr[i_][j]` for `i_`, `j_` in (2).
@@ -268,7 +268,7 @@ void ensure_usage(int argc, char **argv) {
  * @pre
  * for all `i < x`, `j < y`, `k < z`, `arr[i][j][k]` is defined.
  *
- * **Owns**:
+ * **Owns**
  * - `arr`.
  * - `arr[i]` for all `i < x`.
  * - `arr[i][j]` for all `i < x`, `j < y`.
