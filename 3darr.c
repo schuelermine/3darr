@@ -56,7 +56,7 @@ bool print_allocs(size_t allocs) {
  *
  * **Effects**: may exit program, may print to stderr.
  */
-size_t get_arg_size_t(char *name, char *arg) {
+size_t get_arg_size_t(char *arg, char *name) {
     char *argptrcpy = arg;
     while (isspace(*argptrcpy))
         argptrcpy++;
@@ -294,9 +294,9 @@ void print_arr(elem ***arr, size_t x, size_t y, size_t z) {
  */
 int main(int argc, char **argv) {
     ensure_usage(argc, argv[0]);
-    size_t x = get_arg_size_t("x", argv[1]);
-    size_t y = get_arg_size_t("y", argv[2]);
-    size_t z = get_arg_size_t("z", argv[3]);
+    size_t x = get_arg_size_t(argv[1], "x");
+    size_t y = get_arg_size_t(argv[2], "y");
+    size_t z = get_arg_size_t(argv[3], "z");
     size_t allocs;
     elem ***arr = mk_arr(x, y, z, &allocs);
     if (!print_allocs(allocs)) {
