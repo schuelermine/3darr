@@ -258,6 +258,7 @@ void ensure_usage(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 }
+
 /** Print elements of array.
  *
  * @param arr: array to print.
