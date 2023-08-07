@@ -20,9 +20,5 @@
             cp -r doc $doc/share/doc
           '';
         };
-        devShells.default = pkgs.stdenv.mkDerivation {
-          name = "env";
-          nativeBuildInputs = with pkgs; [ doxygen graphviz ];
-        };
       });
 }
