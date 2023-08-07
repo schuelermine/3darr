@@ -249,7 +249,7 @@ elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
  */
 void ensure_usage(int argc, char *argv_0) {
     if (argc != 4) {
-        char *pname = argc == 0 || argv_0[0] == '\n' ? "<program>" : argv_0;
+        char *pname = argc == 0 || argv_0[0] == '\0' ? "<program>" : argv_0;
         fprintf(stderr,
                 "wrong usage!\n"
                 "usage: %s <x> <y> <z>\n",
