@@ -44,15 +44,14 @@ bool print_allocs(size_t allocs) {
 /**
  * Parse argument to `size_t`.
  *
- * @param argno argument index in `argv`.
- * @param argid argument name to be printed.
- * @param argv argument array.
+ * @param arg argument string to be processed.
+ * @param name argument name to be printed.
  *
  * @return parsed argument as `size_t`.
  *
  * @pre
- * - `argv[argno]` is defined and nul-terminated.
- * - `argid` is nul-terminated.
+ * - `arg` is nul-terminated.
+ * - `name` is nul-terminated.
  *
  * **Effects**: may exit program, may print to stderr.
  */
@@ -237,10 +236,11 @@ elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
 /** Check argument count, correct user, and exit.
  *
  * @param argc argument count.
- * @param argv argument array.
+ * @param argv_0 first argument string (usually the program name).
  *
  * @pre
- * for all `i < argc`, `argv[i]` is defined and nul-terminated.
+ * - only if `argc == 0`, `argv_0` may be undefined.
+ * - `argv_0`, if defined, is nul-terminated.
  *
  * **Effects**: may print to stderr, may exit program.
  *
