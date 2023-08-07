@@ -56,24 +56,23 @@ bool print_allocs(size_t allocs) {
  *
  * **Effects**: may exit program, may print to stderr.
  */
-size_t get_arg_size_t(int argno, char *argid, char **argv) {
-    char *arg = argv[argno];
+size_t get_arg_size_t(char *name, char *arg) {
     char *argptrcpy = arg;
     while (isspace(*argptrcpy))
         argptrcpy++;
     if (*argptrcpy == '-') {
-        fprintf(stderr, "argument %s must be positive\n", argid);
+        fprintf(stderr, "argument %s must be positive\n", name);
         exit(EXIT_FAILURE);
     }
     char *endptr;
     errno = 0;
     uintmax_t val = strtoumax(arg, &endptr, 10);
     if (arg[0] == '\0' || *endptr != '\0') {
-        fprintf(stderr, "failed to parse argument %s\n", argid);
+        fprintf(stderr, "failed to parse argument %s\n", name);
         exit(EXIT_FAILURE);
     }
     if (errno == ERANGE || val > SIZE_MAX) {
-        fprintf(stderr, "argument %s is too large\n", argid);
+        fprintf(stderr, "argument %s is too large\n", name);
         exit(EXIT_FAILURE);
     }
     return (size_t)val;
@@ -248,9 +247,9 @@ elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
  * @post
  * for all `i < 4`, `argv[i]` is defined.
  */
-void ensure_usage(int argc, char **argv) {
+void ensure_usage(int argc, char *argv_0) {
     if (argc != 4) {
-        char *pname = argc == 0 || argv[0][0] == '\n' ? "<program>" : argv[0];
+        char *pname = argc == 0 || argv_0[0] == '\n' ? "<program>" : argv_0;
         fprintf(stderr,
                 "wrong usage!\n"
                 "usage: %s <x> <y> <z>\n",
@@ -294,10 +293,10 @@ void print_arr(elem ***arr, size_t x, size_t y, size_t z) {
  * with unique values, and prints it.
  */
 int main(int argc, char **argv) {
-    ensure_usage(argc, argv);
-    size_t x = get_arg_size_t(1, "x", argv);
-    size_t y = get_arg_size_t(2, "y", argv);
-    size_t z = get_arg_size_t(3, "z", argv);
+    ensure_usage(argc, argv[0]);
+    size_t x = get_arg_size_t("x", argv[1]);
+    size_t y = get_arg_size_t("y", argv[2]);
+    size_t z = get_arg_size_t("z", argv[3]);
     size_t allocs;
     elem ***arr = mk_arr(x, y, z, &allocs);
     if (!print_allocs(allocs)) {
