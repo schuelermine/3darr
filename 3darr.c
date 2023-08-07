@@ -229,7 +229,7 @@ elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
             ++*allocs;
             for (size_t k = 0; k < z; k++)
                 // First three prime numbers
-                arr[i][j][k] = elem_pow(2, i) + elem_pow(3, j) + elem_pow(5, k);
+                arr[i][j][k] = elem_pow(2, i) * elem_pow(3, j) * elem_pow(5, k);
         }
     }
     return arr;
