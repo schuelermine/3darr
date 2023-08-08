@@ -11,6 +11,8 @@
 /**
  * @file 3darr.c
  * Code comprising the `3darr` program.
+ * Allocates a 3D array with dimensions specified by the arguments, populates it
+ * with unique values, and prints it.
  * Unless specified otherwise, all functions have the implicit precondition of
  * all their arguments being defined. Unless specified otherwise, all functions
  * taking pointers have the implicit precondition that these pointers are valid,

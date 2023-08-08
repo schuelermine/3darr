@@ -13,7 +13,7 @@ all: $(ALL)
 3darr.o: 3darr.c
 	$(CC) -c $^ -o $@ $(CCFLAGS) $(COMMONFLAGS)
 
-doc:
+doc: 3darr.c
 	doxygen Doxyfile
 
 .PHONY: clean
