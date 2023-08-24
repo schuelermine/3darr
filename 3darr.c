@@ -135,27 +135,27 @@ void free_complete_arr(elem ***arr, size_t x, size_t y) {
 
 /** Free incomplete array.
  *
- * @param arr: array to free.
- * @param y: size of elements of arr.
- * @param i: index of latest element of arr for which allocation has begun.
- * @param j: index of latest element of `arr[i]` for which allocation has
+ * @param arr array to free.
+ * @param y size of elements of arr.
+ * @param i index of latest element of arr for which allocation has begun.
+ * @param j index of latest element of `arr[i]` for which allocation has
  * begun, or y if allocation of that subarray is finished.
  *
  * @pre
  * - (1) for all `i_ < i`, `arr[i_]` is defined and allocated.
- * - (2) for all `i_ < i`, `j < y`, `arr[i_][j]` is defined and allocated.
+ * - (2) for all `i_ < i`, `j_ < y`, `arr[i_][j_]` is defined and allocated.
  * - (3) for all `j_ < j`, `arr[i][j_]` is defined and allocated.
- * - arr is allocated.
+ * - `arr` is allocated.
  *
  * **Correctness conditions**
  * - in (1), these are the only such `i_`.
- * - in (2), these are the only such `i_`, `j`.
+ * - in (2), these are the only such `i_`, `j_`.
  * - in (3), these are the only such `j_`.
  *
  * **Frees**
  * - `arr`
  * - `arr[i_]` for `i_` in (1).
- * - `arr[i_][j]` for `i_`, `j_` in (2).
+ * - `arr[i_][j_]` for `i_`, `j_` in (2).
  * - `arr[i][j_]` for `j_` in (3).
  *
  * **Effects**: frees `arr` and all valid pointers derived from it.
