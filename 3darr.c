@@ -197,7 +197,7 @@ elem elem_pow(elem x, size_t y) {
  * program.
  *
  * @post
- * for all `i < x`, `j < y`, `k < z`, `x[i][j][k]` is defined, where x is the
+ * for all `i < x`, `j < y`, `k < z`, `x[i][j][k]` is defined, where `x` is the
  * return value.
  */
 elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
