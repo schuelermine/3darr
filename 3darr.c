@@ -97,7 +97,8 @@ size_t get_arg_size_t(char *arg, char *name) {
  * **Frees**
  * - `arr[i_]` for `i_` in (1).
  * - `arr[i_][j]` for `i_`, `j` in (2).
- * - Effects: frees some pointers derived from `arr`.
+ *
+ * Effects: frees some pointers derived from `arr`.
  */
 void free_sub_arr_up_to(elem ***arr, size_t i, size_t y) {
     for (size_t i_ = 0; i_ < i; i_++) {
@@ -109,9 +110,9 @@ void free_sub_arr_up_to(elem ***arr, size_t i, size_t y) {
 
 /** Free completely allocated array.
  *
- * @param arr: array to free.
- * @param x: size of `arr`.
- * @param y: size of elements of `arr`.
+ * @param arr array to free.
+ * @param x size of `arr`.
+ * @param y size of elements of `arr`.
  *
  * @pre
  * - (1) for all `i < x`, `arr[i]` is defined and allocated.
@@ -191,7 +192,7 @@ elem elem_pow(elem x, size_t y) {
  * @param x desired size of first layer of array.
  * @param y desired size of each second layer of array.
  * @param z desired size of each third layer of array.
- * @param[out] allocs: pointer to store allocation count.
+ * @param[out] allocs pointer to store allocation count.
  *
  * **Effects**: allocates, writes *allocs, may print to stderr, may exit
  * program.
@@ -262,10 +263,10 @@ void ensure_usage(int argc, char *argv_0) {
 
 /** Print elements of array.
  *
- * @param arr: array to print.
- * @param x: size of `arr`.
- * @param y: size of elements of `arr`.
- * @param z: size of elements of elements of `arr`.
+ * @param arr array to print.
+ * @param x size of `arr`.
+ * @param y size of elements of `arr`.
+ * @param z size of elements of elements of `arr`.
  *
  * @pre
  * for all `i < x`, `j < y`, `k < z`, `arr[i][j][k]` is defined.
