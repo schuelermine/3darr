@@ -2,7 +2,6 @@
 #include <errno.h>
 #include <inttypes.h>
 #include <limits.h>
-#include <math.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -18,7 +17,8 @@
  * taking pointers have the implicit precondition that these pointers are valid,
  * and their pointees, if they are pointers, also satisfy the property the
  * argument itself satisfies. If an effect is not qualified by "may" or does not
- * express a mere possibility, it is guaranteed.
+ * express a mere possibility, it is guaranteed. A pointer/array being nul-terminated
+ * implies it is a valid pointer.
  */
 
 /**
