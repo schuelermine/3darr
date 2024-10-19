@@ -35,7 +35,7 @@ typedef unsigned long elem;
  *
  * **Effects**: Prints to stdout, may print to stderr.
  */
-bool print_allocs(size_t allocs) {
+static bool print_allocs(size_t allocs) {
     if (printf("successfully allocated %zu times\n", allocs) < 0) {
         perror("value output");
         return false;
@@ -57,7 +57,7 @@ bool print_allocs(size_t allocs) {
  *
  * **Effects**: may exit program, may print to stderr.
  */
-size_t get_arg_size_t(char *arg, char *name) {
+static size_t get_arg_size_t(char *arg, char *name) {
     char *argptrcpy = arg;
     while (isspace(*argptrcpy))
         argptrcpy++;
@@ -100,7 +100,7 @@ size_t get_arg_size_t(char *arg, char *name) {
  *
  * Effects: frees some pointers derived from `arr`.
  */
-void free_sub_arr_up_to(elem ***arr, size_t i, size_t y) {
+static void free_sub_arr_up_to(elem ***arr, size_t i, size_t y) {
     for (size_t i_ = 0; i_ < i; i_++) {
         for (size_t j = 0; j < y; j++)
             free(arr[i_][j]);
@@ -129,7 +129,7 @@ void free_sub_arr_up_to(elem ***arr, size_t i, size_t y) {
  *
  * **Effects**: frees arr and all valid pointers derived from it.
  */
-void free_complete_arr(elem ***arr, size_t x, size_t y) {
+static void free_complete_arr(elem ***arr, size_t x, size_t y) {
     free_sub_arr_up_to(arr, x, y);
     free(arr);
 }
@@ -161,7 +161,7 @@ void free_complete_arr(elem ***arr, size_t x, size_t y) {
  *
  * **Effects**: frees `arr` and all valid pointers derived from it.
  */
-void free_incomplete_arr(elem ***arr, size_t y, size_t i, size_t j) {
+static void free_incomplete_arr(elem ***arr, size_t y, size_t i, size_t j) {
     free_sub_arr_up_to(arr, i, y);
     for (size_t j_ = 0; j_ < j; j_++)
         free(arr[i][j_]);
@@ -174,7 +174,7 @@ void free_incomplete_arr(elem ***arr, size_t y, size_t i, size_t j) {
  * @param x base of exponentiation.
  * @param y exponent.
  */
-elem elem_pow(elem x, size_t y) {
+static elem elem_pow(elem x, size_t y) {
     elem result = 1;
     while (true) {
         if ((y & 1) == 1)
@@ -201,7 +201,7 @@ elem elem_pow(elem x, size_t y) {
  * for all `i < x`, `j < y`, `k < z`, `x[i][j][k]` is defined, where `x` is the
  * return value.
  */
-elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
+static elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
     *allocs = 0;
     elem ***arr = malloc(x * sizeof(elem **));
     if (arr == NULL) {
@@ -250,7 +250,7 @@ elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
  * @post
  * for all `i < 4`, `argv[i]` is defined.
  */
-void ensure_usage(int argc, char *argv_0) {
+static void ensure_usage(int argc, char *argv_0) {
     if (argc != 4) {
         char *pname = argc == 0 || argv_0[0] == '\0' ? "<program>" : argv_0;
         fprintf(stderr,
@@ -278,7 +278,7 @@ void ensure_usage(int argc, char *argv_0) {
  *
  * **Effects**: prints to stdout, may print to stderr, may exit program.
  */
-void print_arr(elem ***arr, size_t x, size_t y, size_t z) {
+static void print_arr(elem ***arr, size_t x, size_t y, size_t z) {
     for (size_t i = 0; i < x; i++)
         for (size_t j = 0; j < y; j++)
             for (size_t k = 0; k < z; k++)
