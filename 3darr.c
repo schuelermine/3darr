@@ -248,7 +248,7 @@ static elem ***mk_arr(size_t x, size_t y, size_t z, size_t *allocs) {
  * **Effects**: may print to stderr, may exit program.
  *
  * @post
- * for all `i < 4`, `argv[i]` is defined.
+ * `i == 4`
  */
 static void ensure_usage(int argc, char *argv_0) {
     if (argc != 4) {
