@@ -62,7 +62,7 @@ static size_t get_arg_size_t(char *arg, char *name) {
     while (isspace((unsigned char)*argptrcpy))
         argptrcpy++;
     if (*argptrcpy == '-') {
-        fprintf(stderr, "argument %s must be positive\n", name);
+        fprintf(stderr, "argument %s must be nonnegative\n", name);
         exit(EXIT_FAILURE);
     }
     char *endptr;
