@@ -59,7 +59,7 @@ static bool print_allocs(size_t allocs) {
  */
 static size_t get_arg_size_t(char *arg, char *name) {
     char *argptrcpy = arg;
-    while (isspace(*argptrcpy))
+    while (isspace((unsigned char)*argptrcpy))
         argptrcpy++;
     if (*argptrcpy == '-') {
         fprintf(stderr, "argument %s must be positive\n", name);
